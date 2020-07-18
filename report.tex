@@ -4,7 +4,7 @@
 % This is a simple template for a LaTeX document using the "article" class.
 % See "book", "report", "letter" for other types of document.
 
-\documentclass[11pt]{article} % use larger type; default would be 10pt
+\documentclass[12pt]{article} % use larger type; default would be 10pt
 
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
 
@@ -15,7 +15,7 @@
 %%% PAGE DIMENSIONS
 \usepackage{geometry} % to change the page dimensions
 \geometry{a4paper} % or letterpaper (US) or a5paper or....
-% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+\geometry{margin=1in} % for example, change the margins to 2 inches all round
 % \geometry{landscape} % set up the page for landscape
 %   read geometry.pdf for detailed page layout information
 
@@ -55,39 +55,62 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{siunitx}
+\usepackage{url}
 \graphicspath{ {./images/} }
 
 %%% The "real" document content comes below...
 
 \title{Controlling an Animatronic Chimpanzee Head}
-\author{JP Sheehan}
+\author{
+	Jesse Patrick Sheehan \\
+	\textit{Department of Electrical and} \\
+	\textit{Computer Engineering} \\
+	\textit{University of Canterbury}\\
+	Christchurch, New Zealand \\
+	jps111@uclive.ac.nz
+}
 %\date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
 
 \begin{document}
 \maketitle
 
+
+\begin{figure}[h]
+	\center
+	\includegraphics[width=0.8\textwidth]{chimp}
+	\caption{The WowWee Alive Chimpanzee (Jiuguang Wang / CC BY-SA).}
+	\label{fig:chimp}
+\end{figure}
+
+\vfill
+
+\noindent \small{\textit{
+The latest version of this document can be found online at \url{https://github.com/jpsheehan/chimp-report/blob/master/report.pdf}.
+}}
+
+\newpage
+
+% https://en.wikipedia.org/wiki/WowWee_Alive_Chimpanzee
+
 \section{Introduction}
 
-The Alive Chimpanzee is a toy designed by WowWee Alive, a division of toy-maker WowWee Limited. %% cite https://en.wikipedia.org/wiki/WowWee_Alive_Chimpanzee
+The Alive Chimpanzee is a toy designed by WowWee Alive, a division of toy-maker WowWee Limited\footnote{\url{https://wowwee.com/}}.
 It includes eight motors and nine sensors that allow it to mimic a real chimpanzee.
 The original product included an embedded system that would allow the Chimpanzee to be operated by remote control or autonomously via its sensors.
-
-%% Include image
 
 A modified version of the Alive Chimpanzee has been donated to the University of Canterbury.
 This modified chimpanzee has had its original control board removed.
 Instead, the sensors and motor control lines are wired to a set of pin headers.
 The goal of this project is to create an embedded system to allow the Alive Chimpanzee's motors to be controlled via software running on another system via some connection.
-An optional goal of this project is to interface with the other sensors in the system.
 
 \section{Background}
 
 \subsection{Inspection}
 
 The base of the product contains the power switch, battery housings, and power socket.
-It was apparent that the product runs on a 6 V DC power supply, either by four D-size batteries, or a centre-positive 6 V (3.5 A) barrel-jack connector.
-The FCC application for the radio transmitter included the user manual. %% cite FCC application
+It was apparent that the product runs on a $\SI{6}{\volt}$ DC power supply, either by four D-size batteries, or a centre-positive $\SI{6}{\volt}$ ($\SI{3.5}{\ampere}$) barrel-jack connector.
+The FCC application for the radio transmitter included the user manual\footnote{\url{https://apps.fcc.gov/eas/GetApplicationAttachment.html?id=589802}}.
 This provided information about the general operation of the device, including the location and purpose of the internal sensors and motors.
 
 The motors provide a high level of control over the chimpanzee's facial expressions.
@@ -137,6 +160,12 @@ For meeting the primary goal of this project, 8 ADC inputs and 8 digital outputs
 To meet these requirements, an Arduino Mega (figure \ref{fig:arduino}) was chosen as the development board.
 
 % include image of Arduino Mega
+\begin{figure}[h]
+	\center
+	\includegraphics[width=0.6\textwidth]{arduino}
+	\caption{The Arduino Mega connected to the motor pins of the chimpanzee.}
+	\label{fig:arduino}
+\end{figure}
 
 \begin{table}[h]
 	\caption{The required inputs and outputs (relative to the microcontroller).}
@@ -192,7 +221,7 @@ A simple firmware package was designed using the Arduino IDE to provide basic mo
 It is written in C and C++ and provides a serial interface to a PC or other device. 
 It does not attempt to operate the h-bridges that are faulty (however this can be enabled easily).
 
-The firmware expects the following connections between the Arduino Mega and the chimpanzee pin header:
+Table \ref{tab:pinmap} shows the expected connections between the Arduino Mega and the chimpanzee pin header for the firmware to work.
 
 \begin{table}[h]
 	\caption{The expected pin mapping between the Arduino and the chimpanzee.}
@@ -231,14 +260,28 @@ It is written in Python (version 3) but can be implemented relatively easily in 
 
 An example program with a GUI (figure \ref{fig:gui}) is included to demonstrate how to call the API functions.
 
-% include image of gui
+The firmware and software can be found in the chimp-code GitHub repository\footnote{\url{https://github.com/jpsheehan/chimp-code/}}.
+
+\begin{figure}[H]
+	\center
+	\includegraphics[width=0.7\textwidth]{gui}
+	\caption{The demonstration graphical user interface.}
+	\label{fig:gui}
+\end{figure}
 
 \section{Results}
 
-The chimpanzee was powered by a $\SI{6}{\volt}$ bench power supply and connected to a laptop via a USB cable.
+The chimpanzee was powered by a $\SI{6}{\volt}$ bench power supply and connected to a laptop via a USB cable (figure \ref{fig:test}).
 The laptop was running a Linux-based operating system and Python version 3.8.
 
 The demonstration program allows the user to control the chimpanzee via a GUI using a mouse. Some functionality is disabled due to the malfunctioning h-bridges.
+
+\begin{figure}[H]
+	\center
+	\includegraphics[width=0.6\textwidth]{test}
+	\caption{The testing setup with chimpanzee and power supply.}
+	\label{fig:test}
+\end{figure}
 
 \section{Conclusion}
 
