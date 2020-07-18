@@ -40,8 +40,8 @@
 \lfoot{}\cfoot{\thepage}\rfoot{}
 
 %%% SECTION TITLE APPEARANCE
-\usepackage{sectsty}
-\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+%\usepackage{sectsty}
+%\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
 % (This matches ConTeXt defaults)
 
 %%% ToC (table of contents) APPEARANCE
@@ -51,6 +51,11 @@
 \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
 
 %%% END Article customizations
+
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\graphicspath{ {./images/} }
 
 %%% The "real" document content comes below...
 
@@ -110,17 +115,30 @@ Along with the motor feedback lines, the following sensors are included:
 
 There is also a speaker located in the neck of the product.
 
+\subsection{Hardware Interface}
+
+The modified chimpanzee provides its inputs, outputs, and power lines with a 2-way 25-pin male pin header (figure \ref{fig:pinheader}).
+Many of the pins are not connected to any signals and some are still unknown.
+
+\begin{figure}[h]
+	\center
+	\includegraphics[width=0.6\textwidth]{pinheader}
+	\caption{The pin header as viewed from the top.}
+	\label{fig:pinheader}
+\end{figure}
+
 \section{Method}
 
 A development board was opted to be used instead of a bare microcontroller.
 This was done to speed up the time taken to prototype a solution.
 
 The type of microcontroller used in this project is constrained by the number of inputs and outputs (table~\ref{tab:gpio}).
-For meeting the primary goal of this project, 8 ADC inputs and 8 ??? outputs are required.
-To meet these requirements, the Arduino XYZ was chosen as the development board.
+For meeting the primary goal of this project, 8 ADC inputs and 8 digital outputs are required.
+To meet these requirements, an Arduino Mega (figure \ref{fig:arduino}) was chosen as the development board.
+
+% include image of Arduino Mega
 
 \begin{table}[h]
-	\label{tab:gpio}
 	\caption{The required inputs and outputs (relative to the microcontroller).}
 	\centering
 	\begin{tabular}{ |c|c|c| }
@@ -135,23 +153,80 @@ To meet these requirements, the Arduino XYZ was chosen as the development board.
 		Eyelid motor feedback & Analogue & Input \\
 		Horizontal eye motor feedback & Analogue & Input \\
 		Vertical eye motor feedback & Analogue & Input \\
-		Head yaw motor control & ??? & Output \\
-		Head pitch motor control & ??? & Output \\
-		Jaw motor control & ??? & Output \\
-		Upper lip motor control & ??? & Output \\
-		Eyebrow motor control & ??? & Output \\
-		Eyelid motor control & ??? & Output \\
-		Horizontal eye motor control & ??? & Output \\
-		Vertical eye motor control & ??? & Output \\
+		Head yaw motor control & Digital & Output \\
+		Head pitch motor control & Digital & Output \\
+		Jaw motor control & Digital & Output \\
+		Upper lip motor control & Digital & Output \\
+		Eyebrow motor control & Digital & Output \\
+		Eyelid motor control & Digital & Output \\
+		Horizontal eye motor control & Digital & Output \\
+		Vertical eye motor control & Digital & Output \\
+		Ground & --- & --- \\
 		\hline
 	\end{tabular}
+	\label{tab:gpio}
 \end{table}
+
+\subsection{Motor Control}
+
+The direction of each motor is controlled by an h-bridge.
+Each h-bridge has two inputs, one for each direction.
+Care should be taken to not drive both h-bridge inputs at the same time to avoid h-bridge ``shoot-through'', this effectively destroys the MOSFETs, rendering the h-bridge non-operational.
+
+After some investigation, it was discovered that the h-bridges for the head pitch, head yaw, eye pitch, and upper lip were not working.
+This may have been the result of h-bridge shoot-through or some other defect.
+This will need to be investigated further and fixed.
+
+The digital inputs can also be controlled via a PWM signal.
+This allows the motors to operate at a slower speed.
+For this project PWM was not used.
+However, this could be useful for a future revision of the firmware.
+
+\subsection{Motor Feedback}
+
+For this proof-of-concept the motor feedback lines were not used as they could not reliably detect the position of their respective motors.
+
+\subsection{Firmware}
+
+A simple firmware package was designed using the Arduino IDE to provide basic motor control for the product.
+It is written in C and C++ and provides a serial interface to a PC or other device. 
+It does not attempt to operate the h-bridges that are faulty (however this can be enabled easily).
+
+\subsection{Software}
+
+A simple API for interacting with the firmware via a serial connection on a host PC is provided.
+It is written in Python (version 3) but can be implemented relatively easily in another language.
+
+An example program with a GUI (figure \ref{fig:gui}) is included to demonstrate how to call the API functions.
+
+% include image of gui
 
 \section{Results}
 
-\section{Discussion}
+The chimpanzee was powered by a $\SI{6}{\volt}$ bench power supply and connected to a laptop via a USB cable.
+The laptop was running a Linux-based operating system and Python version 3.8.
+
+The demonstration program allows the user to control the chimpanzee via a GUI using a mouse. Some functionality is disabled due to the malfunctioning h-bridges.
 
 \section{Conclusion}
 
+A microcontroller was used to allow a toy chimpanzee head to be controlled via a computer.
+It was found that some of the motor drive circuitry was non-functional and thus could not be activated.
+Firmware was written in C/C++ to control the remaining motors, this functionality is exposed via a serial protocol.
+A software API was written in Python to interact with the microcontroller via the serial protocol.
+A demonstration program was included to show how to interact with the API.
+
+The project is functional enough to be included and used in other projects such as computer vision, etc.
+
+\subsection{Future Research}
+
+The following tasks should be undertaken to improve the results of the project:
+\begin{itemize}
+	\item A discrete $\SI{6}{\volt}$ power supply should be purchased so that a bench supply is not needed.
+	\item The 4 broken h-bridges should be fixed.
+	\item The motor feedback signals should be used to provide finer control of the motors.
+	\item The motors could be controlled via PWM to allow for motor speed control.
+	\item All of this functionality should be exposed via the firmware via the serial protocol and software API.
+\end{itemize}
 
 \end{document}
