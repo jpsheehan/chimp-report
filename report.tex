@@ -192,6 +192,38 @@ A simple firmware package was designed using the Arduino IDE to provide basic mo
 It is written in C and C++ and provides a serial interface to a PC or other device. 
 It does not attempt to operate the h-bridges that are faulty (however this can be enabled easily).
 
+The firmware expects the following connections between the Arduino Mega and the chimpanzee pin header:
+
+\begin{table}[h]
+	\caption{The expected pin mapping between the Arduino and the chimpanzee.}
+	\centering
+	\begin{tabular}{ |c|c|c| }
+		\hline
+		\textbf{Signal} & \textbf{Arduino Pin} & \textbf{Chimp Pin} \\
+		\hline
+		??? & 22 & 1 \\
+		??? & 23 & 2 \\
+		Eyes Right & 24 & 3 \\
+		Eyes Left & 25 & 4 \\
+		Eyes Down & 26 & 5 \\
+		Eyes Up & 27 & 6\\
+		Eyelids Open & 28 & 7 \\
+		Eyelids Close & 29 & 8 \\
+		Jaw Open & 30 & 9 \\
+		Jaw Close & 31 & 10 \\
+		Eyebrows Down & 32 & 11 \\
+		Eyebrows Up & 33 & 12 \\
+		Head Left & 34 & 13 \\
+		Head Right & 35 & 14\\
+		??? & 36 & 15 \\
+		??? & 37 & 16 \\
+		Ground & GND & 36 \\
+		\hline
+	\end{tabular}
+	\label{tab:pinmap}
+\end{table}
+
+
 \subsection{Software}
 
 A simple API for interacting with the firmware via a serial connection on a host PC is provided.
